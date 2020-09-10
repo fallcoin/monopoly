@@ -9,7 +9,7 @@
         >
         </el-input>
         <el-carousel :interval="5000" arrow="always" class="swiper">
-            <el-carousel-item v-for="item in swipers" :key="item">
+            <el-carousel-item v-for="(item,index) in swipers" :key="index">
                 <img :src="item" alt="" />
             </el-carousel-item>
         </el-carousel>
@@ -29,7 +29,6 @@ export default {
         }
     },
     created() {
-        console.log("home")
     },
 }
 </script>

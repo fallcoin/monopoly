@@ -5,9 +5,13 @@
                 <span>大富翁</span>
             </div>
             <div class="tabs">
-                <div v-for="item in tabs" :key="item">
-                    <router-link tag="div" :to="'/homePage/' + item.link">{{ item.name }}</router-link>
-                </div>
+                <router-link
+                    tag="div"
+                    :to="'/homePage/' + item.link"
+                    v-for="item in tabs"
+                    :key="item.name"
+                    >{{ item.name }}</router-link
+                >
             </div>
             <div class="avatar">
                 <img :src="avatar" alt="" />
@@ -24,9 +28,9 @@ export default {
     data() {
         return {
             tabs: [
-                { name: "首页", link: "home" },
-                { name: "发现", link: "found" },
-                { name: "关于", link: "about" },
+                { name: "首 页", link: "home" },
+                { name: "发 现", link: "found" },
+                { name: "关 于", link: "about" },
             ],
             avatar: "http://image.fallcoin.xyz/blog/20200109/kxiBzemLU31a.jpg",
         }
@@ -47,7 +51,6 @@ export default {
 .tabs {
     display: flex;
     justify-content: center;
-    width: 300px;
     height: 100%;
     font-size: 20px;
     font-weight: 600;
@@ -56,14 +59,17 @@ export default {
     margin-left: 20px;
     margin-right: 20px;
     height: 100%;
-    width: 50px;
+    width: 80px;
     text-align: center;
     line-height: 60px;
 }
 .tabs > div:hover {
-    background-color: #636e72;
+    background-color: #95a5a6;
     cursor: pointer;
     color: #fff;
+}
+.router-link-active {
+    color: #f1c40f;
 }
 .logo {
     line-height: 60px;

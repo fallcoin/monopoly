@@ -13,7 +13,6 @@ export default {
         //     console.log(res);
         // })
         // .catch(err => {
-        //     console.log(33333);
         //     console.log(err);
         // })
     }

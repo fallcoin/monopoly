@@ -1,6 +1,7 @@
 'use strict'
 
-import { app, BrowserWindow, Menu } from 'electron'
+import { app, BrowserWindow, Menu, ipcMain } from 'electron'
+const basicConfig = require('./congfig')
 /**
  * Set `__static` path to static files in production
  * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-static-assets.html
@@ -19,20 +20,28 @@ function createWindow() {
        * Initial window options
        */
     Menu.setApplicationMenu(null)
-    mainWindow = new BrowserWindow({
-        height: 563,
-        useContentSize: true,
-        width: 1000,
-        webPreferences: {
-            nodeIntegration: true
-        },
-        resizable: false
-    })
+    mainWindow = new BrowserWindow(basicConfig)
 
     mainWindow.loadURL(winURL)
 
     mainWindow.on('closed', () => {
         mainWindow = null
+    })
+
+    ipcMain.on('add-register-window', () => {
+        const registerWindow = new BrowserWindow({
+            ...basicConfig, ...{
+                height: 550,
+                width: 600,
+                parent: mainWindow
+            }
+        })
+
+        registerWindow.loadURL(`${winURL}#register`)
+
+        registerWindow.on('closed', () => {
+            mainWindow = null
+        })
     })
 }
 

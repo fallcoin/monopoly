@@ -67,7 +67,8 @@ function startRenderer() {
                 proxy: {
                     '/api': {
                         // 请求的目标服务器地址
-                        target: 'http://localhost:8888/',
+                        // target: 'http://localhost:8888/',
+                        target: 'http://172.22.238.215:8080/',
                         // 如果是https接口，需要配置这个参数
                         // secure: false,
                         // 设置允许跨域
