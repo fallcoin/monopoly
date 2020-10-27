@@ -3,16 +3,22 @@
         <div class="title">大富翁</div>
         <transition name="slide-show">
             <div class="form" v-if="show">
-                <el-form :model="userLogin" label-width="60px">
+                <el-form
+                    :model="userLogin"
+                    :rules="loginFormRules"
+                    ref="loginFormRef"
+                    label-width="60px"
+                    :hide-required-asterisk="true"
+                >
                     <span class="form-title">登录</span>
-                    <el-form-item label="学号">
+                    <el-form-item label="学号" prop="stu_id">
                         <el-input
-                            v-model="userLogin.stuId"
+                            v-model="userLogin.stu_id"
                             clearable
                             prefix-icon="el-icon-user-solid"
                         ></el-input>
                     </el-form-item>
-                    <el-form-item label="密码">
+                    <el-form-item label="密码" prop="password">
                         <el-input
                             v-model="userLogin.password"
                             prefix-icon="el-icon-key"
@@ -40,23 +46,70 @@
 </template>
 
 <script>
-const { ipcRenderer } = require("electron")
+const { ipcRenderer } = require("electron");
+import axios from '../api/http';
+import * as api from "../api/index";
 export default {
     data() {
         return {
             userLogin: {
-                stuId: "",
+                stu_id: "",
                 password: "",
             },
             show: false,
+            loginFormRules: {
+                stu_id: [
+                    { required: true, message: "请输入学号", trigger: "blur" },
+                    {
+                        len: 12,
+                        pattern: new RegExp("^20"),
+                        message: "请输入正确的学号",
+                        trigger: "blur",
+                    },
+                ],
+                password: [
+                    { required: true, message: "请输入密码", trigger: "blur" },
+                    {
+                        min: 8,
+                        max: 12,
+                        message: "请输入正确的密码",
+                        trigger: "blur",
+                    },
+                ],
+            },
         }
     },
     methods: {
         login() {
-            this.$router.push("/homePage/home")
+            this.$refs.loginFormRef.validate(async (valid) => {
+                if (!valid) {
+                    return
+                }
+                // 登录操作
+                let res = await api.LOGIN({
+                    ...this.userLogin,
+                })
+                console.log(res);
+                if (res.code == 200) {
+                    this.$message({
+                        message: "登录成功",
+                        type: "success",
+                        onClose: () => {
+                            this.$store.dispatch("User/SET_TOKEN", res.Authorization);
+                            this.$store.dispatch("User/SET_USER_ID", res.stu_id)
+                            window.localStorage.setItem('token', res.Authorization);
+                            window.localStorage.setItem('stu_id', res.stu_id);
+                            this.$router.push("/homePage/home");
+                        },
+                        duration: 1000
+                    })
+                } else {
+                    this.$message.error('账号或密码错误');
+                }
+            })
         },
         register() {
-            ipcRenderer.send('add-register-window')
+            ipcRenderer.send("add-register-window")
         },
     },
     mounted() {

@@ -1,7 +1,7 @@
 <template>
-    <div>
+    <div class="content">
         <header class="header">
-            <div class="logo">
+            <div class="logo" @click="toLogin">
                 <span>大富翁</span>
             </div>
             <div class="tabs">
@@ -13,8 +13,11 @@
                     >{{ item.name }}</router-link
                 >
             </div>
-            <div class="avatar">
-                <img :src="avatar" alt="" />
+            <div class="option">
+                <div class="option-avatar" @click="toMyInfo">
+                    <img :src="avatar" alt="" />
+                </div>
+                <el-button class="option-logout" type="text" @click="logout">登出</el-button>
             </div>
         </header>
         <div class="main">
@@ -30,16 +33,31 @@ export default {
             tabs: [
                 { name: "首 页", link: "home" },
                 { name: "发 现", link: "found" },
-                { name: "关 于", link: "about" },
+                { name: "我 的", link: "my" },
+                { name: "关 于", link: "about" }
             ],
             avatar: "http://image.fallcoin.xyz/blog/20200109/kxiBzemLU31a.jpg",
         }
     },
-    created() {},
+    methods: {
+        toMyInfo() {
+            this.$router.push('/homePage/my/myInfo')
+        },
+        toLogin() {
+            this.$router.push('/login')
+        },
+        logout() {
+            
+        }
+    }
 }
 </script>
 
 <style scoped>
+.content {
+    width: 100%;
+    height: 100%;
+}
 .header {
     width: 100%;
     height: 60px;
@@ -69,7 +87,7 @@ export default {
     color: #fff;
 }
 .router-link-active {
-    color: #f1c40f;
+    color: #2e86de;
 }
 .logo {
     line-height: 60px;
@@ -78,20 +96,28 @@ export default {
     color: #3498db;
     font-size: 25px;
 }
-.avatar {
+.option {
+    display: flex;
+    align-items: center;
+    width: 100px;
+    justify-content: space-between;
+}
+.option-avatar {
     display: flex;
     align-items: center;
 }
-.avatar img {
+.option-avatar img {
     height: 45px;
     width: 45px;
     border-radius: 50%;
     cursor: pointer;
 }
+.option-logout {
+    height: 40px;
+}
 .main {
-    margin-left: 50px;
-    margin-right: 50px;
-    background: #fff;
+    width: 100%;
     height: 100%;
+    position: relative;
 }
 </style>

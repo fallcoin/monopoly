@@ -1,7 +1,7 @@
 'use strict'
 
 import { app, BrowserWindow, Menu, ipcMain } from 'electron'
-const basicConfig = require('./congfig')
+import { basicConfig } from './config.js'
 /**
  * Set `__static` path to static files in production
  * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-static-assets.html
@@ -21,27 +21,57 @@ function createWindow() {
        */
     Menu.setApplicationMenu(null)
     mainWindow = new BrowserWindow(basicConfig)
-
     mainWindow.loadURL(winURL)
-
     mainWindow.on('closed', () => {
         mainWindow = null
     })
+    mainWindow.once('ready-to-show', () => {
+        mainWindow.show()
+    })
 
+    // 注册页
+    let registerWindow
     ipcMain.on('add-register-window', () => {
-        const registerWindow = new BrowserWindow({
+        registerWindow = new BrowserWindow({
             ...basicConfig, ...{
+                height: 550,
+                width: 600,
+                parent: mainWindow,
+                modal: true
+            }
+        })
+        registerWindow.loadURL(`${winURL}#register`)
+        registerWindow.once('ready-to-show', () => {
+            registerWindow.show()
+        })
+        registerWindow.on('closed', () => {
+            registerWindow = null
+        })
+    })
+    ipcMain.on('close-register-window', () => {
+        registerWindow.close()
+    })
+
+    // 商品页面
+    let productWindow
+    ipcMain.on('add-product-window', () => {
+        productWindow = new BrowserWindow({
+            ...basicConfig, ... {
                 height: 550,
                 width: 600,
                 parent: mainWindow
             }
         })
-
-        registerWindow.loadURL(`${winURL}#register`)
-
-        registerWindow.on('closed', () => {
-            mainWindow = null
+        productWindow.loadURL(`${winURL}#product`)
+        productWindow.once('ready-to-show', () => {
+            productWindow.show()
         })
+        productWindow.on('closed', () => {
+            productWindow = null
+        })
+    })
+    ipcMain.on('close-product-window', () => {
+        productWindow.close()
     })
 }
 

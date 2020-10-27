@@ -8,13 +8,6 @@
 export default {
     name: "my-project",
     created() {
-        // this.$http.get('/api/hello').then(res => {
-        //     console.log(22222);
-        //     console.log(res);
-        // })
-        // .catch(err => {
-        //     console.log(err);
-        // })
     }
 }
 </script>
