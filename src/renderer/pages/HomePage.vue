@@ -17,7 +17,9 @@
                 <div class="option-avatar" @click="toMyInfo">
                     <img :src="avatar" alt="" />
                 </div>
-                <el-button class="option-logout" type="text" @click="logout">登出</el-button>
+                <el-button class="option-logout" type="text" @click="logout"
+                    >登出</el-button
+                >
             </div>
         </header>
         <div class="main">
@@ -27,6 +29,7 @@
 </template>
 
 <script>
+const { ipcRenderer } = require("electron");
 export default {
     data() {
         return {
@@ -34,30 +37,24 @@ export default {
                 { name: "首 页", link: "home" },
                 { name: "发 现", link: "found" },
                 { name: "我 的", link: "my" },
-                { name: "关 于", link: "about" }
+                { name: "关 于", link: "about" },
             ],
             avatar: "http://image.fallcoin.xyz/blog/20200109/kxiBzemLU31a.jpg",
         }
     },
     methods: {
         toMyInfo() {
-            this.$router.push('/homePage/my/myInfo')
+            this.$router.push("/homePage/my/myInfo")
         },
         toLogin() {
-            this.$router.push('/login')
+            this.$router.push("/login")
         },
-        logout() {
-            
-        }
-    }
+        logout() {},
+    },
 }
 </script>
 
 <style scoped>
-.content {
-    width: 100%;
-    height: 100%;
-}
 .header {
     width: 100%;
     height: 60px;

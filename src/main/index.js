@@ -73,6 +73,50 @@ function createWindow() {
     ipcMain.on('close-product-window', () => {
         productWindow.close()
     })
+
+    // 发布页面
+    let publishWindow
+    ipcMain.on('add-publish-window', () => {
+        publishWindow = new BrowserWindow({
+            ...basicConfig, ... {
+                height: 800,
+                width: 1024,
+                parent: mainWindow
+            }
+        })
+        publishWindow.loadURL(`${winURL}#publish`)
+        publishWindow.once('ready-to-show', () => {
+            publishWindow.show()
+        })
+        publishWindow.on('closed', () => {
+            productWindow = null
+        })
+    })
+    ipcMain.on('close-publish-window', () => {
+        publishWindow.close()
+    })
+
+    // 商品查询结果页
+    let shopListWindow
+    ipcMain.on('add-shoplist-window', (ev, keyword) => {
+        shopListWindow = new BrowserWindow({
+            ...basicConfig, ... {
+                height: 600,
+                width: 600,
+                parent: mainWindow
+            }
+        })
+        shopListWindow.loadURL(`${winURL}?keyword=${keyword}#shopList`)
+        shopListWindow.once('ready-to-show', () => {
+            shopListWindow.show()
+        })
+        shopListWindow.on('closed', () => {
+            productWindow = null
+        })
+    })
+    ipcMain.on('close-shoplist-window', () => {
+        shopListWindow.close()
+    })
 }
 
 app.on('ready', createWindow)

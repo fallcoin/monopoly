@@ -37,39 +37,51 @@ const router = new Router({
                 {
                     path: 'my/',
                     redirect: 'my/cart',
-                    component: require('@/components/HomeTabs/My').default,
+                    component: require('@/components/HomeTabs/MyPages/My').default,
                     children: [
+                        // 购物相关
                         {
                             path: 'cart',
-                            component: require('@/components/MyPages/Cart').default
+                            component: require('@/components/HomeTabs/MyPages/ShopAbout/Cart').default
                         },
                         {
                             path: 'starList',
-                            component: require('@/components/MyPages/StarList').default
+                            component: require('@/components/HomeTabs/MyPages/ShopAbout/StarList').default
                         },
+                        {
+                            path: 'order',
+                            component: require('@/components/HomeTabs/MyPages/ShopAbout/Order').default
+                        },
+                        {
+                            path: 'cargoStatus',
+                            component: require('@/components/HomeTabs/MyPages/ShopAbout/CargoStatus').default
+                        },
+                        // 个人信息
                         {
                             path: 'myInfo',
-                            component: require('@/components/MyPages/MyInfo').default
-                        },
-                        {
-                            path: 'setting',
-                            component: require('@/components/MyPages/Setting').default
-                        },
-                        {
-                            path: 'visitTrace',
-                            component: require('@/components/MyPages/VisitTrace').default
-                        },
-                        {
-                            path: 'shopTrace',
-                            component: require('@/components/MyPages/ShopTrace').default
-                        },
-                        {
-                            path: 'publishTrace',
-                            component: require('@/components/MyPages/PublishTrace').default
+                            component: require('@/components/HomeTabs/MyPages/MyInfoAbout/MyInfo').default
                         },
                         {
                             path: 'accountInfo',
-                            component: require('@/components/MyPages/AccountInfo').default
+                            component: require('@/components/HomeTabs/MyPages/MyInfoAbout/AccountInfo').default
+                        },
+                        // 历史记录
+                        {
+                            path: 'visitTrace',
+                            component: require('@/components/HomeTabs/MyPages/TraceAbout/VisitTrace').default
+                        },
+                        {
+                            path: 'shopTrace',
+                            component: require('@/components/HomeTabs/MyPages/TraceAbout/ShopTrace').default
+                        },
+                        {
+                            path: 'publishTrace',
+                            component: require('@/components/HomeTabs/MyPages/TraceAbout/PublishTrace').default
+                        },
+                        // 设置
+                        {
+                            path: 'setting',
+                            component: require('@/components/HomeTabs/MyPages/Setting').default
                         }
                     ]
                 }
@@ -78,6 +90,14 @@ const router = new Router({
         {
             path: '/product',
             component: require('@/pages/Product').default
+        },
+        {
+            path: '/publish',
+            component: require('@/pages/Publish').default
+        },
+        {
+            path: '/shopList',
+            component: require('@/pages/ShopList').default
         }
     ]
 })

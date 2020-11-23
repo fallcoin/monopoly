@@ -1,9 +1,9 @@
 <template>
     <div class="content">
-        <div class="waterfall" ref="waterFall" id="wa">
+        <div class="waterfall" ref="waterFall" id="waterfall">
             <div
-                v-for="(item, index) in waterfallList"
-                :key="index"
+                v-for="item in waterfallList"
+                :key="item.com_id"
                 class="waterfall-item"
                 :style="{
                     top: item.imgData.top + 'px',
@@ -16,7 +16,7 @@
                 <div class="waterfall-item-in">
                     <img :src="item.imgData.src" alt="" />
                     <div class="water-fall-item-desc">
-                        <div class="commodity-title"><span>{{item.title}}</span></div>
+                        <div class="commodity-title"><span>{{item.name}}</span></div>
                         <div class="commodity-price">{{item.price}}</div>
                     </div>
                 </div>
@@ -27,52 +27,56 @@
 
 <script>
 const { ipcRenderer } = require("electron")
+import { throttle } from '../../utils/util'
+import * as api from '../../api/index'
+import {imagePrefix} from '../../config/index'
 export default {
     data() {
         return {
             waterfallList: [], // 瀑布流的显示数组
-            commodityList: Object.freeze([
+            commodityList: [
                 {
                     comId: 0,
-                    title: '鼠标',
+                    name: '鼠标',
                     price: 43.2,
                     image: require("../../assets/images/1.png")
                 },
                 {
                     comId: 1,
-                    title: '键盘',
+                    name: '键盘',
                     price: 43.2,
                     image: require("../../assets/images/2.png")
                 },
                 {
                     comId: 2,
-                    title: '键盘',
+                    name: '键盘',
                     price: 43.2,
                     image: require("../../assets/images/3.png")
                 },
                 {
                     comId: 3,
-                    title: '键盘',
+                    name: '键盘',
                     price: 43.2,
                     image: require("../../assets/images/4.png")
                 },
                 {
                     comId: 4,
-                    title: '键盘',
+                    name: '键盘',
                     price: 43.2,
                     image: require("../../assets/images/5.png")
                 },
                 {
                     comId: 5,
-                    title: '键盘',
+                    name: '键盘',
                     price: 43.2,
                     image: require("../../assets/images/6.png")
                 }
-            ]),
+            ],
             imgWidth: 300, // 图片宽度
             deviationHeight: [], // 高度偏移数组
             screenWidth: 0,
             imgCol: 0,
+            page: 1
         }
     },
     created() {
@@ -84,23 +88,42 @@ export default {
         for (let i = 0; i < this.deviationHeight.length; i++) {
             this.deviationHeight[i] = baseHeight
         }
-        this.imgPreloading()
+        // this.getProducts(this.page);
+        for (let i = 0; i < this.commodityList.length; i++) {
+            this.imgPreloading(this.commodityList[i])
+        }
+
+        window.addEventListener('scroll', throttle((event) => {
+            if (document.documentElement.scrollTop + document.documentElement.clientHeight - Math.min.apply(null, this.deviationHeight) - 60 > 0) {
+                // 卷起的高度 + 视图高度 > 瀑布流中最小的一项高度
+                // 60 为导航栏的高度
+                // 增加数据
+                this.getProducts(this.page);
+            }
+        }, 100))
     },
     methods: {
         toProduct() {
             ipcRenderer.send("add-product-window")
         },
-        imgPreloading() {
-            for (let i = 0; i < this.commodityList.length; i++) {
-                let img = new Image()
-                img.src = this.commodityList[i].image
-                img.onload = img.onerror = () => {
-                    let imgData = {}
-                    imgData.height = (this.imgWidth / img.width) * img.height //按比例计算图片高度
-                    imgData.src = this.commodityList[i].image
-                    this.waterfallList.push({imgData, ...this.commodityList[i]})
-                    this.rankImg(imgData)
-                }
+        async getProducts(page = 1) {
+            let res = await api.GET_SHOP_LIST({page})
+            if (res.code == 200) {
+                res.list.forEach(el => {
+                    this.imgPreloading(Object.assign(el, {image: imagePrefix + el.pic}))
+                });
+            }
+            this.page++
+        },
+        imgPreloading(commodityData) {
+            let img = new Image()
+            img.src = commodityData.image
+            img.onload = img.onerror = () => {
+                let imgData = {}
+                imgData.height = (this.imgWidth / img.width) * img.height //按比例计算图片高度
+                imgData.src = commodityData.image
+                this.waterfallList.push({imgData, ...commodityData})
+                this.rankImg(imgData)
             }
         },
         rankImg(imgData) {

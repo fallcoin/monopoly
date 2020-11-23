@@ -1,6 +1,7 @@
 import axios from 'axios';
 import qs from 'qs';
-import store from '../store'
+import store from '../store';
+import Vue from 'vue'
 
 axios.defaults.baseURL = 'http://172.22.238.215:8080';
 // axios.defaults.withCredentials = true;
@@ -10,8 +11,8 @@ axios.defaults.timeout = 0;
 
 axios.interceptors.request.use(config => {
     // config.headers['X-Token'] = ""
-    if (store.getters.getToken) {
-        config.headers.Authorization = token;
+    if (store.getters['User/getToken']) {
+        config.headers.Authorization = store.getters['User/getToken'];
     }
     return config;
 })

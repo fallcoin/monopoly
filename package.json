@@ -60,11 +60,13 @@
     "chromedriver": "^85.0.0",
     "element-ui": "^2.13.2",
     "qs": "^6.9.4",
+    "spark-md5": "^3.0.1",
     "vue": "^2.5.16",
     "vue-electron": "^1.0.6",
     "vue-router": "^3.0.1",
     "vuex": "^3.0.1",
-    "vuex-electron": "^1.0.0"
+    "vuex-electron": "^1.0.0",
+    "wangeditor": "^4.1.0"
   },
   "devDependencies": {
     "ajv": "^6.5.0",

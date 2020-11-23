@@ -1,6 +1,6 @@
 <template>
     <div class="content">
-        <div class="title">大富翁</div>
+        <div class="title" @click="goto">大富翁</div>
         <transition name="slide-show">
             <div class="form" v-if="show">
                 <el-form
@@ -47,8 +47,7 @@
 
 <script>
 const { ipcRenderer } = require("electron");
-import axios from '../api/http';
-import * as api from "../api/index";
+
 export default {
     data() {
         return {
@@ -86,10 +85,9 @@ export default {
                     return
                 }
                 // 登录操作
-                let res = await api.LOGIN({
+                let res = await this.$api.LOGIN({
                     ...this.userLogin,
                 })
-                console.log(res);
                 if (res.code == 200) {
                     this.$message({
                         message: "登录成功",
@@ -111,6 +109,9 @@ export default {
         register() {
             ipcRenderer.send("add-register-window")
         },
+        goto() {
+            this.$router.push("/homePage/home");
+        }
     },
     mounted() {
         this.show = !this.show

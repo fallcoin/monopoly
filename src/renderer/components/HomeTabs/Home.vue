@@ -3,7 +3,7 @@
         <div class="search">
             <el-input
                 placeholder="请输入你想查询的内容"
-                v-model="keyWord"
+                v-model.trim="keyWord"
                 clearable
                 class="search-input"
                 prefix-icon="el-icon-search"
@@ -16,11 +16,23 @@
                 <img :src="item" alt="" />
             </el-carousel-item>
         </el-carousel>
+
+        <div class="float-btn">
+            <el-button
+                icon="el-icon-plus"
+                class="float-btn-publish"
+                type="primary"
+                @click="toPublish"
+                circle
+            ></el-button>
+        </div>
     </div>
 </template>
 
 <script>
 import { throttle } from '../../utils/util.js'
+import * as api from '../../api/index'
+const { ipcRenderer } = require("electron");
 export default {
     data() {
         return {
@@ -36,9 +48,14 @@ export default {
         showKeyWord: throttle((keyWord) => {
             // 根据输入的内容显示查询关键词
         }, 500),
-        search() {
-            
-        }
+        async search() {
+            if (this.keyWord) {
+                ipcRenderer.send("add-shoplist-window", this.keyWord)
+            }
+        },
+        toPublish() {
+            ipcRenderer.send("add-publish-window")
+        },
     },
     created() {},
 }
@@ -70,5 +87,14 @@ export default {
 .swiper img {
     height: 100%;
     width: 100%;
+}
+.float-btn {
+    position: fixed;
+    bottom: 75px;
+    right: 75px;
+}
+.float-btn-publish {
+    width: 60px;
+    height: 60px;
 }
 </style>

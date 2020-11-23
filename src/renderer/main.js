@@ -3,7 +3,7 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import store from './store'
-import api from './api/index'
+import * as api from './api/index'
 
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
