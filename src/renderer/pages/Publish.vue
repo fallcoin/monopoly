@@ -17,11 +17,12 @@
                 <el-form-item label="价格" prop="price">
                     <el-input v-model.number="commodityForm.price"></el-input>
                 </el-form-item>
-                <el-form-item label="数量" prop="num">
-                    <el-input v-model.number="commodityForm.num"></el-input>
+                <el-form-item label="数量" prop="number">
+                    <el-input v-model.number="commodityForm.number"></el-input>
                 </el-form-item>
                 <el-form-item label="封面">
                     <el-upload
+                        :on-remove="handleRemove"
                         class="upload-demo"
                         action
                         :auto-upload="false"
@@ -29,12 +30,15 @@
                         :on-change="changeFile"
                         :file-list="fileList"
                         list-type="picture"
+                        :limit="3"
+                        :on-exceed="exceed"
                     >
                         <el-button size="small" type="primary"
                             >点击上传</el-button
                         >
                         <div slot="tip" class="el-upload__tip">
                             只能上传jpg/png文件，且每张不超过2M
+                            需上传3张
                         </div>
                     </el-upload>
                 </el-form-item>
@@ -51,13 +55,14 @@
 <script>
 import E from "wangeditor";
 import { fileParse } from '../utils/util';
+const { ipcRenderer } = require("electron");
 export default {
     data() {
         return {
             commodityForm: {
                 name: "",
                 price: "",
-                num: "",
+                number: "",
             },
             commodityFormRules: {
                 name: [
@@ -72,12 +77,14 @@ export default {
                 price: [
                     { required: true, message: "请输入商品价格", trigger: "blur" }
                 ],
-                num: [
+                number: [
                     { required: true, message: "请输入商品数量", trigger: "blur" }
                 ]
             },
             editor: null,
-            fileList: []
+            fileList: [],
+            transFiles: [],
+            post: false
         }
     },
     created() {
@@ -88,15 +95,53 @@ export default {
         })
     },
     methods: {
-        onSubmit() {
-            console.log(this.editor.txt.html());
+        async onSubmit() {
+            if (this.post) {
+                return
+            }
+            this.post = true
+            if (this.transFiles.length != 3) {
+                this.$message.error("商品图片应为3张")
+            }
+            this.transFiles.map(item => {
+                delete item.uid
+            })
+            let res = await this.$api.PUBLISH({
+                commodity: {
+                    ...this.commodityForm,
+                    descript: this.editor.txt.html(),
+                },
+                images: this.transFiles
+            })
+            if (res.code == 200) {
+                this.$message({
+                    type: 'success',
+                    message: '发布成功',
+                    onClose: () => {
+                        ipcRenderer.send("close-publish-window");
+                    },
+                    duration: 2000
+                })
+            } else {
+                this.$message.error("发布失败")
+            }
+            this.post = false
+        },
+        handleRemove(file) {
+            this.transFiles.splice(this.transFiles.findIndex(item => item.uid == file.uid), 1)
         },
         cancel() {
-
+            this.fileList = []
+            this.transFiles = []
+            this.commodityForm = {
+                name: "",
+                price: "",
+                num: "",
+            }
+            this.editor.txt.html('<h3>请在这里编辑商品的具体信息</h3>')
         },
         async changeFile(file) {
             file = file.raw;
-
             let result = await fileParse(file, "base64" , (type, size) => {
                 if (!/(png|jpe?g)/i.test(type)) {
                     this.$message.error("文件格式不正确");
@@ -107,19 +152,17 @@ export default {
                     this.$message.error("请选择小于5M的文件");
                     return false;
                 }
-
                 return true;
             });
 
-            if (result) {
-                let res = await this.$api.UPLOAD({
-                    chunk: encodeURIComponent(result),
-                    filename: file.name
-                })
-                if (res.code == 200) {
-                    
-                }
-            }
+            this.transFiles.push({
+                chunk: encodeURIComponent(result),
+                filename: file.uid + file.name.match(/\.\w*/g)[file.name.match(/\.\w*/g).length - 1],
+                uid: file.uid
+            })
+        },
+        exceed() {
+            this.$message.error("不能选择3张以上的图片")
         }
     }
 }

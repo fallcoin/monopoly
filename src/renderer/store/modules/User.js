@@ -1,6 +1,9 @@
+import { imagePrefix } from '../../config/index'
+
 const state = {
     token: '',
-    user_id: ''
+    user_id: '',
+    avatar: ''
 }
 
 const mutations = {
@@ -9,6 +12,9 @@ const mutations = {
     },
     SET_USER_ID: (state, param) => {
         state.user_id = param;
+    },
+    SET_AVATAR: (state, param) => {
+        state.avatar = imagePrefix + param
     }
 }
 
@@ -18,6 +24,9 @@ const actions = {
     },
     SET_USER_ID: ({ commit }, payload) => {
         commit('SET_USER_ID', payload);
+    },
+    SET_AVATAR: ({ commit }, payload) => {
+        commit('SET_AVATAR', payload)
     }
 }
 
@@ -27,6 +36,9 @@ const getters = {
     },
     getUserId: (state) => {
         return state.user_id;
+    },
+    getAvatar: (state) => {
+        return state.avatar
     }
 }
 

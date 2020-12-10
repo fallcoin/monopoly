@@ -52,10 +52,6 @@ const router = new Router({
                             path: 'order',
                             component: require('@/components/HomeTabs/MyPages/ShopAbout/Order').default
                         },
-                        {
-                            path: 'cargoStatus',
-                            component: require('@/components/HomeTabs/MyPages/ShopAbout/CargoStatus').default
-                        },
                         // 个人信息
                         {
                             path: 'myInfo',

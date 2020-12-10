@@ -1,6 +1,6 @@
 <template>
     <div class="content">
-        <div class="title" @click="goto">大富翁</div>
+        <div class="title">大富翁</div>
         <transition name="slide-show">
             <div class="form" v-if="show">
                 <el-form
@@ -108,9 +108,6 @@ export default {
         },
         register() {
             ipcRenderer.send("add-register-window")
-        },
-        goto() {
-            this.$router.push("/homePage/home");
         }
     },
     mounted() {

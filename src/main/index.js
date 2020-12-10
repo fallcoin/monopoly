@@ -34,7 +34,7 @@ function createWindow() {
     ipcMain.on('add-register-window', () => {
         registerWindow = new BrowserWindow({
             ...basicConfig, ...{
-                height: 550,
+                height: 600,
                 width: 600,
                 parent: mainWindow,
                 modal: true
@@ -54,7 +54,7 @@ function createWindow() {
 
     // 商品页面
     let productWindow
-    ipcMain.on('add-product-window', () => {
+    ipcMain.on('add-product-window', (ev, com_id) => {
         productWindow = new BrowserWindow({
             ...basicConfig, ... {
                 height: 550,
@@ -62,7 +62,7 @@ function createWindow() {
                 parent: mainWindow
             }
         })
-        productWindow.loadURL(`${winURL}#product`)
+        productWindow.loadURL(`${winURL}?com_id=${com_id}#product`)
         productWindow.once('ready-to-show', () => {
             productWindow.show()
         })
@@ -81,7 +81,8 @@ function createWindow() {
             ...basicConfig, ... {
                 height: 800,
                 width: 1024,
-                parent: mainWindow
+                parent: mainWindow,
+                modal: true
             }
         })
         publishWindow.loadURL(`${winURL}#publish`)
@@ -95,6 +96,9 @@ function createWindow() {
     ipcMain.on('close-publish-window', () => {
         publishWindow.close()
     })
+    ipcMain.on('changeAvatar', (event) => {
+        event.sender.send('changeAvatar')
+    })
 
     // 商品查询结果页
     let shopListWindow
@@ -103,7 +107,8 @@ function createWindow() {
             ...basicConfig, ... {
                 height: 600,
                 width: 600,
-                parent: mainWindow
+                parent: mainWindow,
+                modal: true
             }
         })
         shopListWindow.loadURL(`${winURL}?keyword=${keyword}#shopList`)

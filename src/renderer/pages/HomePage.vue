@@ -1,7 +1,7 @@
 <template>
     <div class="content">
         <header class="header">
-            <div class="logo" @click="toLogin">
+            <div class="logo">
                 <span>大富翁</span>
             </div>
             <div class="tabs">
@@ -29,7 +29,7 @@
 </template>
 
 <script>
-const { ipcRenderer } = require("electron");
+const { ipcRenderer } = require("electron")
 export default {
     data() {
         return {
@@ -39,17 +39,41 @@ export default {
                 { name: "我 的", link: "my" },
                 { name: "关 于", link: "about" },
             ],
-            avatar: "http://image.fallcoin.xyz/blog/20200109/kxiBzemLU31a.jpg",
+            avatar: "",
         }
     },
+    async created() {
+        this.changeAvatar()
+        ipcRenderer.on('changeAvatar', () => {
+            this.changeAvatar()
+        })
+    },
     methods: {
+        async changeAvatar() {
+            let res = await this.$api.GET_AVATAR()
+            if (res.code == 200) {
+                this.$store.dispatch("User/SET_AVATAR", res.pic)
+                this.avatar = this.$store.getters['User/getAvatar']
+            }
+        },
         toMyInfo() {
             this.$router.push("/homePage/my/myInfo")
         },
-        toLogin() {
-            this.$router.push("/login")
-        },
-        logout() {},
+        logout() {
+            this.$store.dispatch("User/SET_TOKEN", '')
+            this.$store.dispatch("User/SET_USER_ID", '')
+            this.$store.dispatch("User/SET_AVATAR", '')
+            window.localStorage.removeItem('token')
+            window.localStorage.removeItem('stu_id')
+            this.$message({
+                message: "退出成功",
+                type: "success",
+                onClose: () => {
+                    this.$router.push("/");
+                },
+                duration: 700
+            })
+        }
     },
 }
 </script>

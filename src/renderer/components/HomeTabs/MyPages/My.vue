@@ -29,10 +29,6 @@
                         </el-menu-item>
                         <el-menu-item index="1-3">
                             <i class="el-icon-tickets"></i>
-                            <span>我的订单</span>
-                        </el-menu-item>
-                        <el-menu-item index="1-4">
-                            <i class="el-icon-tickets"></i>
                             <span>商家订单</span>
                         </el-menu-item>
                     </el-menu-item-group>
@@ -120,11 +116,6 @@ export default {
                         destination = "/homePage/my/order"
                     }
                     break
-                case "1-4":
-                    {
-                        destination = "/homePage/my/cargoStatus"
-                    }
-                    break  
                 case "2-1":
                     {
                         destination = "/homePage/my/visitTrace"

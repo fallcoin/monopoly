@@ -26,12 +26,14 @@
                 circle
             ></el-button>
         </div>
+
+        <div class="ad-left">待投放广告位</div>
+        <div class="ad-right">待投放广告位</div>
     </div>
 </template>
 
 <script>
 import { throttle } from '../../utils/util.js'
-import * as api from '../../api/index'
 const { ipcRenderer } = require("electron");
 export default {
     data() {
@@ -96,5 +98,23 @@ export default {
 .float-btn-publish {
     width: 60px;
     height: 60px;
+}
+.ad-left {
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    position: fixed;
+    width: 120px;
+    height: 300px;
+    background-color: #bdc3c7;
+}
+.ad-right {
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    position: fixed;
+    width: 120px;
+    height: 300px;
+    background-color: #bdc3c7;
 }
 </style>

@@ -22,7 +22,7 @@
     "postinstall": "npm run lint:fix"
   },
   "build": {
-    "productName": "my-project",
+    "productName": "Monopoly",
     "appId": "com.example.yourapp",
     "directories": {
       "output": "build"

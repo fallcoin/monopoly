@@ -11,10 +11,10 @@
                     width: imgWidth + 'px',
                     height: item.imgData.height + 'px',
                 }"
-                @click="toProduct"
+                @click="toProduct(item.com_id)"
             >
                 <div class="waterfall-item-in">
-                    <img :src="item.imgData.src" alt="" />
+                    <img :src="item.imgData.src" alt="图片显示不了" />
                     <div class="water-fall-item-desc">
                         <div class="commodity-title"><span>{{item.name}}</span></div>
                         <div class="commodity-price">{{item.price}}</div>
@@ -28,49 +28,48 @@
 <script>
 const { ipcRenderer } = require("electron")
 import { throttle } from '../../utils/util'
-import * as api from '../../api/index'
 import {imagePrefix} from '../../config/index'
 export default {
     data() {
         return {
             waterfallList: [], // 瀑布流的显示数组
             commodityList: [
-                {
-                    comId: 0,
-                    name: '鼠标',
-                    price: 43.2,
-                    image: require("../../assets/images/1.png")
-                },
-                {
-                    comId: 1,
-                    name: '键盘',
-                    price: 43.2,
-                    image: require("../../assets/images/2.png")
-                },
-                {
-                    comId: 2,
-                    name: '键盘',
-                    price: 43.2,
-                    image: require("../../assets/images/3.png")
-                },
-                {
-                    comId: 3,
-                    name: '键盘',
-                    price: 43.2,
-                    image: require("../../assets/images/4.png")
-                },
-                {
-                    comId: 4,
-                    name: '键盘',
-                    price: 43.2,
-                    image: require("../../assets/images/5.png")
-                },
-                {
-                    comId: 5,
-                    name: '键盘',
-                    price: 43.2,
-                    image: require("../../assets/images/6.png")
-                }
+                // {
+                //     com_id: 0,
+                //     name: '鼠标',
+                //     price: 43.2,
+                //     image: require("../../assets/images/1.png")
+                // },
+                // {
+                //     com_id: 1,
+                //     name: '键盘',
+                //     price: 43.2,
+                //     image: require("../../assets/images/2.png")
+                // },
+                // {
+                //     com_id: 2,
+                //     name: '键盘',
+                //     price: 43.2,
+                //     image: require("../../assets/images/3.png")
+                // },
+                // {
+                //     com_id: 3,
+                //     name: '键盘',
+                //     price: 43.2,
+                //     image: require("../../assets/images/4.png")
+                // },
+                // {
+                //     com_id: 4,
+                //     name: '键盘',
+                //     price: 43.2,
+                //     image: require("../../assets/images/5.png")
+                // },
+                // {
+                //     com_id: 5,
+                //     name: '键盘',
+                //     price: 43.2,
+                //     image: require("../../assets/images/6.png")
+                // }
             ],
             imgWidth: 300, // 图片宽度
             deviationHeight: [], // 高度偏移数组
@@ -88,10 +87,10 @@ export default {
         for (let i = 0; i < this.deviationHeight.length; i++) {
             this.deviationHeight[i] = baseHeight
         }
-        // this.getProducts(this.page);
-        for (let i = 0; i < this.commodityList.length; i++) {
-            this.imgPreloading(this.commodityList[i])
-        }
+        this.getProducts(this.page);
+        // for (let i = 0; i < this.commodityList.length; i++) {
+        //     this.imgPreloading(this.commodityList[i])
+        // }
 
         window.addEventListener('scroll', throttle((event) => {
             if (document.documentElement.scrollTop + document.documentElement.clientHeight - Math.min.apply(null, this.deviationHeight) - 60 > 0) {
@@ -103,14 +102,14 @@ export default {
         }, 100))
     },
     methods: {
-        toProduct() {
-            ipcRenderer.send("add-product-window")
+        toProduct(com_id) {
+            ipcRenderer.send("add-product-window", com_id)
         },
         async getProducts(page = 1) {
-            let res = await api.GET_SHOP_LIST({page})
+            let res = await this.$api.GET_SHOP_LIST({page})
             if (res.code == 200) {
                 res.list.forEach(el => {
-                    this.imgPreloading(Object.assign(el, {image: imagePrefix + el.pic}))
+                    this.imgPreloading(Object.assign(el, {image: imagePrefix + el.pic1}))
                 });
             }
             this.page++
@@ -120,6 +119,7 @@ export default {
             img.src = commodityData.image
             img.onload = img.onerror = () => {
                 let imgData = {}
+                console.log(img);
                 imgData.height = (this.imgWidth / img.width) * img.height //按比例计算图片高度
                 imgData.src = commodityData.image
                 this.waterfallList.push({imgData, ...commodityData})

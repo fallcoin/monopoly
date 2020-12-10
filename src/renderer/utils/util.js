@@ -1,3 +1,5 @@
+const fs = require('fs');
+
 function throttle(fn, wait = 1000) {
     let previous = 0
     return (...args) => {
@@ -40,8 +42,34 @@ function getQueryVariable(variable) {
     return false
 }
 
+function readFile(path, format = "utf8") {
+    return new Promise((resolve, reject) => {
+        fs.readFile(path, format, (err, data) => {
+            if (err) {
+                reject();
+                return;
+            }
+            resolve(data);
+        })
+    })
+}
+
+function writeFile(path, data) {
+    return new Promise((resolve, reject) => {
+        fs.writeFile(path, data, (err) => {
+            if (err) {
+                reject();
+                return;
+            }
+            resolve(200);
+        })
+    })
+}
+
 export {
     throttle,
     fileParse,
-    getQueryVariable
+    getQueryVariable,
+    readFile,
+    writeFile
 }

@@ -15,6 +15,12 @@
                     clearable
                 ></el-input>
             </el-form-item>
+            <el-form-item label="手机" prop="phone">
+                <el-input
+                    v-model="userRegister.phone"
+                    clearable
+                ></el-input>
+            </el-form-item>
             <el-form-item label="年级" prop="grade">
                 <el-input
                     v-model.number="userRegister.grade"
@@ -82,6 +88,7 @@ export default {
                 academy: "",
                 password: "",
                 confirmPassword: "",
+                phone: ""
             },
             academyOptions: [
                 {
@@ -138,7 +145,10 @@ export default {
                         trigger: ["change", "blur"],
                     },
                 ],
-            },
+                phone: [
+                    { required: true, message: "请输入联系电话", trigger: "blur" },
+                ]
+            }
         }
     },
     methods: {

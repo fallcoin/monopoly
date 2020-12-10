@@ -15,12 +15,16 @@
                             ref="userInfoFormRef"
                             class="form"
                         >
-                            <el-form-item label="用户名" prop="name">
+                            <el-form-item label="用户名" prop="username">
                                 <el-input
                                     v-model="userInfoModel.username"
                                 ></el-input>
                             </el-form-item>
-
+                            <el-form-item label="电话" prop="phone">
+                                <el-input
+                                    v-model="userInfoModel.phone"
+                                ></el-input>
+                            </el-form-item>
                             <el-form-item label="年级" prop="grade">
                                 <el-input
                                     v-model.number="userInfoModel.grade"
@@ -88,8 +92,9 @@
 </template>
 
 <script>
-import { fileParse } from '../../../../utils/util';
+import { fileParse } from '../../../../utils/util'
 import { imagePrefix } from '../../../../config/index'
+const { ipcRenderer } = require("electron")
 export default {
     data() {
         return {
@@ -99,6 +104,7 @@ export default {
                 sex: "",
                 grade: "",
                 academy: "",
+                phone: ""
             },
             academyOptions: [
                 {
@@ -122,8 +128,11 @@ export default {
                         max: 6,
                         message: "长度为2-6个字符",
                         trigger: ["change", "blur"],
-                    },
+                    }
                 ],
+                phone: [
+                    { required: true, message: "请输入联系电话", trigger: "blur" },
+                ]
             },
             avatar: {
                 chunk: '',
@@ -135,12 +144,13 @@ export default {
         // 获取个人信息
         const { code, information } = await this.$api.GET_USER_INFO()
         if (code == 200) {
-            const { academy, grade, sex, username, pic } = information
+            const { academy, grade, sex, username, pic, phone } = information
             academy && (this.userInfoModel.academy = academy)
             grade && (this.userInfoModel.grade = grade)
             sex && (this.userInfoModel.sex = sex)
             username && (this.userInfoModel.username = username)
             pic && (this.imageUrl = imagePrefix + pic)
+            phone && (this.userInfoModel.phone = phone)
         } else {
             this.$message.error("获取个人信息失败")
         }
@@ -151,12 +161,8 @@ export default {
                 if (!valid) {
                     return
                 }
-                let option
-                if (this.avatar.filename) {
-                   option = { ...this.avatar }
-                }
                 let res = await this.$api.UPDATE_USER_INFO({
-                    ...option,
+                    avatar: this.avatar.filename ? this.avatar : {},
                     ...this.userInfoModel
                 })
                 if (res.code == 200) {
@@ -164,6 +170,7 @@ export default {
                         message: "修改成功",
                         type: "success"
                     })
+                    ipcRenderer.send('changeAvatar')
                 }
             })
         },
@@ -198,7 +205,7 @@ export default {
 <style scoped>
 .box-card {
     width: 100%;
-    height: 70vh;
+    height: 80vh;
 }
 .content {
     display: flex;
