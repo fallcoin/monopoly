@@ -197,6 +197,10 @@ export default {
             }
             cartList.push(this.productInfo.com_id)
             await writeFile(filePath, JSON.stringify(cartList))
+            this.$message({
+                    type: 'success',
+                    message: '添加成功'
+                })
         },
         async purchase() {
             let res = await this.$api.PURCHASE({

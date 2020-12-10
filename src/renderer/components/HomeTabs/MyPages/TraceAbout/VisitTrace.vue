@@ -120,12 +120,17 @@ export default {
             let trace = await readFile(filePath)
             trace = JSON.parse(trace)
             
-            let delId = this.shopList.filter(item => item.checked == true)
+            let delItem = this.shopList.filter(item => item.checked == true)
             trace = trace.filter(id => {
-                let index = delId.findIndex(delId => delId == id)
+                let index = delItem.findIndex(delItem => delItem.com_id == id)
                 return index == -1
             })
             await writeFile(filePath, JSON.stringify(trace))
+            this.$message({
+                type: 'success',
+                message: '删除成功'
+            })
+            this.shopList = []
         },
         toDetail(com_id) {
             ipcRenderer.send("add-product-window", com_id)
